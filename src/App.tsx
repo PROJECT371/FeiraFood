@@ -260,7 +260,7 @@ export default function App() {
     try {
       const historicoParaApi = historicoAtualizado.slice(0, -1).map((m) => ({ role: m.role, text: m.text }));
 
-      const { data, error } = await db.functions.invoke("chat-ia", {
+      const { data, error } = await db.functions.invoke("hyper-service", {
         body: {
           historico: historicoParaApi,
           mensagem: novaMsgUsuario.text,
