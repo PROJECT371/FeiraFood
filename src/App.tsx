@@ -2,7 +2,6 @@ import { useState, useRef, useEffect } from "react";
 import { db } from "@/lib/supabase";
 
 const PERFIL_DEMO = {
-  nome: "Seu Antônio",
   localizacao: "Mamanguape, Paraíba",
   culturas: ["Alface", "Couve", "Tomate", "Macaxeira"],
 };
@@ -44,6 +43,24 @@ function construirGradeTome(humor = "normal", piscando = false) {
     } else if (humor === "confuso") {
       if (dentroElipse(c, r, 7, 12.5, 1.5, 1.9)) return c <= 6.6 ? "#fff" : "#1B2B1F";
       if (r === 13 && c >= 13 && c <= 15) return "#1B2B1F";
+    } else if (humor === "surpreso") {
+      if (dentroElipse(c, r, 7, 12, 2.1, 2.4)) return c <= 6.3 ? "#fff" : "#1B2B1F";
+      if (dentroElipse(c, r, 14, 12, 2.1, 2.4)) return c <= 13.3 ? "#fff" : "#1B2B1F";
+    } else if (humor === "sapeca") {
+      if (r === 13 && c >= 6 && c <= 8) return "#1B2B1F";
+      if (dentroElipse(c, r, 14, 12, 1.7, 2)) return c <= 13.5 ? "#fff" : "#1B2B1F";
+    } else if (humor === "triste") {
+      if (r === 12 && (c === 6 || c === 8)) return "#1B2B1F";
+      if (r === 13 && c === 7) return "#1B2B1F";
+      if (r === 12 && (c === 13 || c === 15)) return "#1B2B1F";
+      if (r === 13 && c === 14) return "#1B2B1F";
+    } else if (humor === "animado") {
+      if (r === 11 && c === 7) return "#1B2B1F";
+      if (r === 12 && (c === 6 || c === 8)) return "#1B2B1F";
+      if (r === 13 && c === 7) return "#1B2B1F";
+      if (r === 11 && c === 14) return "#1B2B1F";
+      if (r === 12 && (c === 13 || c === 15)) return "#1B2B1F";
+      if (r === 13 && c === 14) return "#1B2B1F";
     } else {
       if (dentroElipse(c, r, 7, 12.5, 1.5, 1.9)) return c <= 6.6 ? "#fff" : "#1B2B1F";
       if (dentroElipse(c, r, 14, 12.5, 1.5, 1.9)) return c <= 13.6 ? "#fff" : "#1B2B1F";
@@ -59,6 +76,17 @@ function construirGradeTome(humor = "normal", piscando = false) {
       if (r === 17 && c === 10) return "#1B2B1F";
       if (r === 16 && c === 11) return "#1B2B1F";
       if (r === 17 && c === 12) return "#1B2B1F";
+    } else if (humor === "surpreso") {
+      if (dentroElipse(c, r, 10.5, 17, 1.6, 1.6)) return "#1B2B1F";
+    } else if (humor === "sapeca") {
+      if (r === 16 && c >= 7 && c <= 15) return "#1B2B1F";
+      if (r === 15 && c === 15) return "#1B2B1F";
+    } else if (humor === "triste") {
+      if (r === 17 && c >= 8 && c <= 13) return "#1B2B1F";
+      if (r === 16 && (c === 7 || c === 14)) return "#1B2B1F";
+    } else if (humor === "animado") {
+      if (dentroElipse(c, r, 10.5, 17, 3.2, 2.4)) return "#1B2B1F";
+      if (dentroElipse(c, r, 10.5, 16.3, 2.6, 1.4)) return "#D5432C";
     } else {
       if (r === 16 && (c === 8 || c === 13)) return "#1B2B1F";
       if (r === 17 && c >= 9 && c <= 12) return "#1B2B1F";
@@ -137,7 +165,7 @@ export default function App() {
   const [mensagens, setMensagens] = useState<Mensagem[]>([
     {
       role: "assistant",
-      text: `Oi, ${PERFIL_DEMO.nome}! Eu sou o Tomé 🍅, o brotinho que ajuda por aqui no FeiraFood. Posso dar uma força com dúvida de plantio, conta de custo e lucro, ou dar uma olhada em como estão suas vendas na plataforma. Bora nessa?`,
+      text: `Oi! Eu sou o Tomé 🍅, o brotinho que ajuda por aqui no FeiraFood. Posso dar uma força com dúvida de plantio, conta de custo e lucro, ou dar uma olhada em como estão suas vendas na plataforma. Bora nessa?`,
       tool: null,
     },
   ]);
@@ -276,7 +304,13 @@ export default function App() {
 
       const palavrasDeIncerteza = ["não tenho certeza", "não encontrei", "não sei", "não tenho informações", "sem dados"];
       const pareceIncerto = palavrasDeIncerteza.some((p) => textoFinal.toLowerCase().includes(p));
-      setHumorTome(pareceIncerto ? "confuso" : "feliz");
+      const reacoesPositivas = ["feliz", "sapeca", "animado"];
+      const humorEscolhido = pareceIncerto
+        ? "confuso"
+        : imagemEnviada
+        ? "surpreso"
+        : reacoesPositivas[Math.floor(Math.random() * reacoesPositivas.length)];
+      setHumorTome(humorEscolhido);
       setTimeout(() => setHumorTome("normal"), 3000);
 
       setMensagens((prev) => {
@@ -323,7 +357,7 @@ export default function App() {
               Tomé · FeiraFood
             </div>
             <div style={{ color: "rgba(242,239,228,.65)", fontSize: ".78rem", marginTop: ".1rem" }}>
-              Conversando com {PERFIL_DEMO.nome} · {PERFIL_DEMO.localizacao}
+              Assistente do produtor · {PERFIL_DEMO.localizacao}
             </div>
           </div>
         </div>
@@ -450,4 +484,3 @@ export default function App() {
     </div>
   );
 }
-
